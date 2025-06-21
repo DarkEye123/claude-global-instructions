@@ -33,8 +33,12 @@
    - Analyze the changes for security, performance, style, and best practices
    - Create `/code-review.md` (or incremental versions like `/code-review-1.md`, `/code-review-2.md`)
    - Return findings to the main agent
-4. **Implement review suggestions** before considering the task complete
-5. **Repeat if necessary** until code meets quality standards
+4. **Before implementing review suggestions**:
+   - Stage and commit your current changes with message: `<changes summary> (before code-review-X)`
+   - Where X is the feedback iteration version (1, 2, 3...)
+   - This preserves your acceptable implementation before code review modifications
+5. **Implement review suggestions** before considering the task complete
+6. **Repeat if necessary** until code meets quality standards
 
 ### Code Review Focus Areas:
 

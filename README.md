@@ -25,6 +25,12 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 - Avoiding unnecessary documentation creation
 - Doing exactly what's asked, nothing more or less
 
+### Subdirectory-Specific Instructions
+- Framework for assessing when specialized CLAUDE.md files are needed
+- 1-10 recommendation scale based on complexity and uniqueness
+- Helps maintain focused guidance for specific areas of complex codebases
+- Avoids duplication while providing contextual assistance
+
 ## How to Use
 
 1. Clone this repository to your local machine

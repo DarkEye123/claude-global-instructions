@@ -54,3 +54,25 @@ The code review agent will create structured markdown files with:
 - Suggestions for improvement
 - Positive aspects noted
 - Overall recommendation (approve/needs changes)
+
+## Subdirectory-Specific CLAUDE.md Files
+
+When working in specific parts of the codebase, assess if that area would benefit from its own CLAUDE.md file. Consider:
+
+1. **Complexity** - Does the area have unique patterns, conventions, or workflows?
+2. **Frequency** - Will this area be modified often?
+3. **Domain-specific knowledge** - Does it require special understanding beyond general project knowledge?
+4. **Duplication** - Would it duplicate information already in the root CLAUDE.md?
+
+### Recommendation Scale
+- **1-3**: Low benefit - general CLAUDE.md is sufficient
+- **4-6**: Moderate benefit - could help but not essential
+- **7-10**: High benefit - area is complex/unique enough to warrant specific guidance
+
+### When suggesting a subdirectory CLAUDE.md:
+1. State the directory path
+2. Provide recommendation score (1-10)
+3. Explain what specific guidance would be helpful
+4. Note what wouldn't be duplicated from root CLAUDE.md
+
+Example: "I recommend creating `/frontend/src/service-worker/CLAUDE.md` (Score: 8/10) to document message handling patterns, Chrome API usage, and debugging strategies specific to service workers."

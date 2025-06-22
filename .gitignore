@@ -21,3 +21,9 @@ Thumbs.db
 # Backup files
 *.bak
 *.backup
+
+projects/**
+statsig/**
+ide/**
+todos/**
+.credentials.json

@@ -12,7 +12,7 @@
 ## Task Documentation Requirement
 
 **Before implementing ANY coding task:**
-1. Create `TASK.md` in the project root documenting:
+1. Create `code-reviews/TASK.md` documenting:
    - Original user request (exact wording)
    - Approved plan/approach
    - Explicit scope and constraints
@@ -95,7 +95,7 @@ Example notifications:
 The ONLY acceptable workflow order is:
 
 **Initial Implementation:**
-1. Create TASK.md with original requirements
+1. Create code-reviews/TASK.md with original requirements
 2. Make file changes
 3. **IMMEDIATELY** notify user about starting code review
 
@@ -162,7 +162,7 @@ Please review my changes with this context:
 - [Any issues you encountered]
 
 Review for: security, performance, best practices, and correctness.
-Create code-review-X.md with findings in the project root.
+Create code-review-X.md with findings in the code-reviews directory.
 ```
 
 ### Before Implementing Review Feedback:
@@ -175,7 +175,7 @@ Create code-review-X.md with findings in the project root.
 ### Documenting Implementation Decisions:
 
 After receiving code review feedback AND decision-helper assessment, you MUST:
-1. **Create an implementation status document** `code-review-X-implementation.md` in the project root (alongside the code review file)
+1. **Create an implementation status document** `code-reviews/code-review-X-implementation.md`
 2. **Document your reasoning** for each suggestion, including decision-helper scores:
    - Which suggestions were implemented and why
    - Which suggestions were not implemented with justification
@@ -246,7 +246,7 @@ After receiving code review feedback and before implementing any suggestions, sp
 Please evaluate these code review suggestions as a neutral third-party:
 
 ## Original Task Context
-**Task Documentation**: See TASK.md for complete original requirements
+**Task Documentation**: See code-reviews/TASK.md for complete original requirements
 **Primary Goal**: [What was originally requested]
 **Explicit Requirements**: [What user specifically asked for]
 **Out of Scope**: [What was NOT requested]
@@ -282,7 +282,7 @@ Based on all reviews and implementations:
   - **APPROVED with optional suggestions**: Critical issues addressed, has minor improvements
   - **NEEDS REVISION**: Critical issues remain unaddressed
 
-Create decision-helper-X.md with your assessment in the project root.
+Create decision-helper-X.md with your assessment in the code-reviews directory.
 ```
 
 ### Implementation Threshold
@@ -314,7 +314,7 @@ Create decision-helper-X.md with your assessment in the project root.
 ## Escalation Documentation
 
 ### When to Create Escalations
-Create `possible-escalations-X.md` when code review identifies issues or improvements that:
+Create `code-reviews/possible-escalations-X.md` when code review identifies issues or improvements that:
 - Are valid concerns but outside the original task scope
 - Received decision-helper scores of 4-6 (moderate importance)
 - Could be important for system integrity but weren't requested
@@ -405,15 +405,29 @@ Poor context leads to poor outcomes. Good context preserves intent and prevents 
 4. Double-check with `git status` before committing
 5. Never commit files containing secrets, API keys, or passwords
 
+## Code Reviews Directory and Git
+
+### NEVER Commit code-reviews Directory by Default
+- **The `code-reviews/` directory is for local review artifacts only**
+- **DO NOT include code-reviews/ in commits** unless explicitly instructed by the user
+- **DO NOT push code-reviews/ to remote** unless specifically requested
+- Review files are meant to be temporary and local to each development session
+- If user wants to preserve review history, they will explicitly ask to commit these files
+
+### When Creating Commits or PRs
+- Always exclude the code-reviews/ directory from staging
+- Use `git status` to verify code-reviews/ files are not staged
+- Focus commits on actual code/documentation changes, not review artifacts
+
 ## Pre-Commit Checklist
 
 Before EVER running git commit, verify:
-- [ ] TASK.md was created at the start of implementation
+- [ ] code-reviews/TASK.md was created at the start of implementation
 - [ ] Review loop has reached APPROVED state from both agents
 - [ ] All critical suggestions (7+) have been implemented
 - [ ] Final review summary documents all iterations
 - [ ] Implementation decisions have been documented with scores
-- [ ] Escalations file created if suggestions were deferred
+- [ ] Escalations file created if suggestions were deferred in code-reviews directory
 - [ ] No sensitive files are being committed
 - [ ] Files are added explicitly (not with -A)
 

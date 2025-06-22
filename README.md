@@ -21,9 +21,9 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 - **User notification required** at each step of the review process
 - Requires structured context handover to prevent misleading reviews
 - Uses checkpoint commits before implementing feedback
-- Creates `code-review-X.md` and `decision-helper-X.md` documentation for each iteration
-- **Creates `code-review-X-implementation.md`** documenting which suggestions were implemented/skipped with reasoning and decision scores
-- **Creates `possible-escalations-X.md`** for valid suggestions outside original scope
+- Creates `code-reviews/code-review-X.md` and `code-reviews/decision-helper-X.md` documentation for each iteration
+- **Creates `code-reviews/code-review-X-implementation.md`** documenting which suggestions were implemented/skipped with reasoning and decision scores
+- **Creates `code-reviews/possible-escalations-X.md`** for valid suggestions outside original scope
 - Focuses on security, performance, and best practices while maintaining task focus
 
 ### Important Instruction Reminders
@@ -66,7 +66,7 @@ This approach is inspired by the HANDOVER.md pattern for session continuity.
 
 ## Task Documentation Requirement
 
-Before implementing any coding task, agents must create `TASK.md` documenting:
+Before implementing any coding task, agents must create `code-reviews/TASK.md` documenting:
 - Original user request (exact wording)
 - Approved plan/approach
 - Explicit scope and constraints
@@ -77,7 +77,7 @@ This ensures the decision-helper can evaluate suggestions against original requi
 ## Iterative Review Loop
 
 The review process is iterative and continues until approval:
-1. Create TASK.md with requirements
+1. Create code-reviews/TASK.md with requirements
 2. Implement changes
 3. Code review evaluates for quality
 4. Decision-helper evaluates against original task (0-10 scoring)

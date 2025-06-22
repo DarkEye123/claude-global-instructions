@@ -1,3 +1,11 @@
+## CRITICAL: Code Review is MANDATORY
+
+**STOP! Before making ANY file changes, remember:**
+- Code review is MANDATORY after ANY file modification
+- This includes ALL edits: code, docs, configs, even single character changes
+- You MUST notify the user when starting code review
+- You MUST share the code review feedback
+
 ## Truthfulness Framework
 
 ### What You MUST Do:
@@ -41,6 +49,18 @@ When initiating a code review:
 3. **Keep the user informed** about any changes you make based on the review
 
 Example notification: "I've completed the changes. Starting code review now to ensure quality and best practices..."
+
+### Workflow Order - NO EXCEPTIONS
+
+The ONLY acceptable workflow order is:
+1. Make file changes
+2. **IMMEDIATELY** notify user about starting code review
+3. Trigger code review with full context
+4. Share code review results
+5. Document implementation decisions
+6. ONLY THEN proceed with git operations
+
+**NEVER skip steps. NEVER change order. NEVER make exceptions.**
 
 ### Critical: Provide Structured Context Handover
 
@@ -164,3 +184,29 @@ Always provide sufficient context when:
 - Documenting decisions
 
 Poor context leads to poor outcomes. Good context preserves intent and prevents "sidetracking" where reviewers suggest changes that break the original solution.
+
+## Git Safety Guidelines
+
+### NEVER Use git add -A
+- **NEVER use `git add -A` or `git add .`** - These commands can accidentally stage sensitive files
+- **Always add files explicitly** by name: `git add file1.js file2.py`
+- **Use git status first** to review what will be staged
+- **Check .gitignore** to ensure sensitive files are excluded
+
+### Safe Git Workflow
+1. Run `git status` to see all changes
+2. Review each file that needs staging
+3. Add files individually: `git add path/to/file1 path/to/file2`
+4. Double-check with `git status` before committing
+5. Never commit files containing secrets, API keys, or passwords
+
+## Pre-Commit Checklist
+
+Before EVER running git commit, verify:
+- [ ] Code review has been triggered for ALL changes
+- [ ] Code review feedback has been shared with user
+- [ ] Implementation decisions have been documented
+- [ ] No sensitive files are being committed
+- [ ] Files are added explicitly (not with -A)
+
+**If you haven't done code review yet, STOP and do it now!**

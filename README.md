@@ -82,6 +82,13 @@ After receiving code review feedback, agents must document their implementation 
 
 This creates a transparent record of decision-making and helps users understand the rationale behind code changes.
 
+## Git Safety Guidelines
+
+- **NEVER use `git add -A`** - Always add files explicitly to avoid staging sensitive files
+- Review changes with `git status` before staging
+- Add files individually by name
+- Ensure .gitignore properly excludes sensitive files
+
 ## Contributing
 
 Feel free to fork this repository and customize the instructions for your specific needs. The framework is designed to be extensible while maintaining core principles of accuracy and quality.

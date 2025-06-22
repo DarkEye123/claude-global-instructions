@@ -8,34 +8,38 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 
 ## What's Included
 
-### Truthfulness Framework
-- Ensures Claude verifies file existence before making claims
-- Requires exact code copying from files
-- Mandates running commands to check actual state
-- Promotes transparency when uncertain
+### AI-Optimized State Machine Architecture (v2.0)
+- **State-based workflow**: All processes defined as explicit state machines with deterministic transitions
+- **Truth tables**: Decision logic expressed as lookup tables, eliminating ambiguity
+- **Exact string templates**: No variation allowed in outputs, ensuring consistency
+- **Machine-parsable format**: YAML-based configuration blocks for automated processing
+
+### Context Initialization
+- **Automatic cleanup**: Code-reviews directory cleared on empty context (new conversations)
+- **State guarantees**: Each conversation starts with clean artifacts
+- **No cross-contamination**: Complete separation between sessions
 
 ### Automatic Code Review Process
-- **MANDATORY** for ALL changes (code, docs, configs, even typos)
-- **Iterative review loop** continues until both code review and decision-helper approve
-- **Decision-helper agent** evaluates suggestions against original task requirements (0-10 scoring)
-- **User notification required** at each step of the review process
-- Requires structured context handover to prevent misleading reviews
-- Uses checkpoint commits before implementing feedback
-- Creates `code-reviews/code-review-X.md` and `code-reviews/decision-helper-X.md` documentation for each iteration
-- **Creates `code-reviews/code-review-X-implementation.md`** documenting which suggestions were implemented/skipped with reasoning and decision scores
-- **Creates `code-reviews/possible-escalations-X.md`** for valid suggestions outside original scope
-- Focuses on security, performance, and best practices while maintaining task focus
+- **State-driven execution**: TRIGGER → STATE → ACTION flow for all operations
+- **Verdict matrix**: Explicit truth table defining all review outcome combinations
+- **Decision-helper authority**: Final arbiter preventing scope creep (overrides code review when out of scope)
+- **Score-based actions**: Deterministic thresholds (≥7 = implement, 4-6 = defer, <4 = skip)
+- **File structure**: Exact naming patterns with no variations allowed
+- **Comprehensive human-readable summary**: `iteration-summary.md` serves as a complete aggregator of all review details, updated in-place after each iteration. Contains full code review suggestions, decision-helper evaluations with reasoning, implementation decisions, and all deferred proposals with context - eliminating the need to check multiple files
+
+### Truthfulness Framework
+- **Verification requirements**: Explicit commands before any claims
+- **Forbidden phrases**: List of ambiguous terms that must never be used
+- **Required phrases**: Exact strings for expressing uncertainty
+
+### Error Recovery
+- **Defined error states**: Each error has detection criteria and recovery action
+- **No undefined behavior**: All edge cases explicitly handled
 
 ### Important Instruction Reminders
-- Preference for editing over creating files
-- Avoiding unnecessary documentation creation
-- Doing exactly what's asked, nothing more or less
-
-### Subdirectory-Specific Instructions
-- Framework for assessing when specialized CLAUDE.md files are needed
-- 1-10 recommendation scale based on complexity and uniqueness
-- Helps maintain focused guidance for specific areas of complex codebases
-- Avoids duplication while providing contextual assistance
+- Core principles maintained as boolean rules
+- Precedence hierarchy for conflicting instructions
+- Git safety rules with explicit forbidden commands
 
 ## Benefits
 
@@ -54,15 +58,17 @@ The `settings.json` file allows pre-approving safe commands globally:
 - Build and test tools
 - Safe file operations
 
-## Code Review Context Handover
+## Code Review State Machine
 
-The enhanced code review process requires structured context to prevent "sidetracking":
-- Session context and original user request
-- Files modified with reasoning
-- Key decisions and code patterns followed
-- Testing considerations and blockers
+The code review process follows a deterministic state machine:
+1. **CREATE_TASK_MD**: Document exact requirements before any work
+2. **IMPLEMENTATION**: Make changes
+3. **SPAWN_CODE_REVIEW**: Trigger review with structured context
+4. **SPAWN_DECISION_HELPER**: Evaluate suggestions against original task
+5. **CHECK_COMPLETION**: Use verdict matrix to determine next state
+6. **EXIT_LOOP** or **IMPLEMENT_SUGGESTIONS**: Based on scores
 
-This approach is inspired by the HANDOVER.md pattern for session continuity.
+All transitions are explicit with no room for interpretation.
 
 ## Task Documentation Requirement
 
@@ -74,29 +80,28 @@ Before implementing any coding task, agents must create `code-reviews/TASK.md` d
 
 This ensures the decision-helper can evaluate suggestions against original requirements.
 
-## Iterative Review Loop
+## Verdict Matrix Logic
 
-The review process is iterative and continues until approval:
-1. Create code-reviews/TASK.md with requirements
-2. Implement changes
-3. Code review evaluates for quality
-4. Decision-helper evaluates against original task (0-10 scoring)
-5. Implement critical suggestions (7+ score)
-6. Repeat until both agents return APPROVED
+The review outcome is determined by a truth table:
 
-Exit criteria:
-- Code review returns APPROVED or APPROVED with optional suggestions
-- Decision-helper returns APPROVED or APPROVED with optional suggestions
-- All critical issues (7+ scores) are addressed
+| Code Review    | Decision Helper | Action                           |
+|----------------|-----------------|----------------------------------|
+| APPROVED       | APPROVED        | EXIT_LOOP                        |
+| APPROVED       | NEEDS_REVISION  | IMPLEMENT_CRITICAL_ONLY (≥7)     |
+| NEEDS_REVISION | APPROVED        | SKIP_REVISIONS (out of scope)   |
+| NEEDS_REVISION | NEEDS_REVISION  | IMPLEMENT_CRITICAL_ONLY (≥7)     |
 
-## Implementation Decision Documentation
+Decision-helper has authority to override code review when suggestions are out of scope.
 
-After each review iteration, agents must document their implementation decisions:
-- **What was implemented**: With decision-helper scores and reasoning
-- **What was not implemented**: With scores and justification
-- **What was deferred to escalations**: Valid suggestions outside original scope
+## Score-Based Implementation Rules
 
-This creates a transparent record of decision-making across all iterations.
+```yaml
+score >= 7.0: IMPLEMENT (mandatory)
+score 4.0-6.9: DEFER_TO_ESCALATIONS
+score < 4.0: SKIP
+```
+
+Every suggestion receives a 0-10 relevance score from the decision-helper. Implementation is deterministic based on these thresholds with no discretion allowed.
 
 ## Git Safety Guidelines
 

@@ -410,7 +410,7 @@ Poor context leads to poor outcomes. Good context preserves intent and prevents 
 ### NEVER Commit code-reviews Directory by Default
 - **The `code-reviews/` directory is for local review artifacts only**
 - **DO NOT include code-reviews/ in commits** unless explicitly instructed by the user
-- **DO NOT push code-reviews/ to remote** unless specifically requested
+- **DO NOT push code-reviews/ to remote** unless explicitly instructed by the user
 - Review files are meant to be temporary and local to each development session
 - If user wants to preserve review history, they will explicitly ask to commit these files
 

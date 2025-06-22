@@ -16,12 +16,15 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 
 ### Automatic Code Review Process
 - **MANDATORY** for ALL changes (code, docs, configs, even typos)
-- **User notification required** when starting code review and sharing feedback
+- **Iterative review loop** continues until both code review and decision-helper approve
+- **Decision-helper agent** evaluates suggestions against original task requirements (0-10 scoring)
+- **User notification required** at each step of the review process
 - Requires structured context handover to prevent misleading reviews
 - Uses checkpoint commits before implementing feedback
-- Creates `/code-review-X.md` documentation
-- **Creates `/code-review-X-implementation.md`** documenting which suggestions were implemented/skipped with reasoning
-- Focuses on security, performance, and best practices
+- Creates `code-review-X.md` and `decision-helper-X.md` documentation for each iteration
+- **Creates `code-review-X-implementation.md`** documenting which suggestions were implemented/skipped with reasoning and decision scores
+- **Creates `possible-escalations-X.md`** for valid suggestions outside original scope
+- Focuses on security, performance, and best practices while maintaining task focus
 
 ### Important Instruction Reminders
 - Preference for editing over creating files
@@ -33,18 +36,6 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 - 1-10 recommendation scale based on complexity and uniqueness
 - Helps maintain focused guidance for specific areas of complex codebases
 - Avoids duplication while providing contextual assistance
-
-## How to Use
-
-1. Clone this repository to your local machine
-2. Copy the `CLAUDE.md` file to your project's root directory or `.claude` folder
-3. Configure global settings in `~/.claude/settings.json`
-4. Use Claude Code aliases for different permission levels:
-   - `claude-edit` - Allow file edits without prompts
-   - `claude-dev` - Full development mode
-   - `claude-safe` - Default permissions
-   - `claude-readonly` - Investigation only
-   - `claude-full` - Skip all permissions (use carefully!)
 
 ## Benefits
 
@@ -73,14 +64,39 @@ The enhanced code review process requires structured context to prevent "sidetra
 
 This approach is inspired by the HANDOVER.md pattern for session continuity.
 
+## Task Documentation Requirement
+
+Before implementing any coding task, agents must create `TASK.md` documenting:
+- Original user request (exact wording)
+- Approved plan/approach
+- Explicit scope and constraints
+- What is NOT included in the task
+
+This ensures the decision-helper can evaluate suggestions against original requirements.
+
+## Iterative Review Loop
+
+The review process is iterative and continues until approval:
+1. Create TASK.md with requirements
+2. Implement changes
+3. Code review evaluates for quality
+4. Decision-helper evaluates against original task (0-10 scoring)
+5. Implement critical suggestions (7+ score)
+6. Repeat until both agents return APPROVED
+
+Exit criteria:
+- Code review returns APPROVED or APPROVED with optional suggestions
+- Decision-helper returns APPROVED or APPROVED with optional suggestions
+- All critical issues (7+ scores) are addressed
+
 ## Implementation Decision Documentation
 
-After receiving code review feedback, agents must document their implementation decisions:
-- **What was implemented**: With reasoning for why it improves the code
-- **What was not implemented**: With justification (e.g., minimal benefit vs. complexity)
-- **What was modified**: When suggestions were adapted to fit project patterns
+After each review iteration, agents must document their implementation decisions:
+- **What was implemented**: With decision-helper scores and reasoning
+- **What was not implemented**: With scores and justification
+- **What was deferred to escalations**: Valid suggestions outside original scope
 
-This creates a transparent record of decision-making and helps users understand the rationale behind code changes.
+This creates a transparent record of decision-making across all iterations.
 
 ## Git Safety Guidelines
 
@@ -88,7 +104,3 @@ This creates a transparent record of decision-making and helps users understand 
 - Review changes with `git status` before staging
 - Add files individually by name
 - Ensure .gitignore properly excludes sensitive files
-
-## Contributing
-
-Feel free to fork this repository and customize the instructions for your specific needs. The framework is designed to be extensible while maintaining core principles of accuracy and quality.

@@ -15,10 +15,11 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 - Promotes transparency when uncertain
 
 ### Automatic Code Review Process
-- Automatically triggers code review after changes
-- Creates structured review documentation
+- **MANDATORY** for ALL changes (code, docs, configs, even typos)
+- Requires structured context handover to prevent misleading reviews
+- Uses checkpoint commits before implementing feedback
+- Creates `/code-review-X.md` documentation
 - Focuses on security, performance, and best practices
-- Implements review suggestions before task completion
 
 ### Important Instruction Reminders
 - Preference for editing over creating files
@@ -35,7 +36,13 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 
 1. Clone this repository to your local machine
 2. Copy the `CLAUDE.md` file to your project's root directory or `.claude` folder
-3. Claude will automatically recognize and follow these instructions
+3. Configure global settings in `~/.claude/settings.json`
+4. Use Claude Code aliases for different permission levels:
+   - `claude-edit` - Allow file edits without prompts
+   - `claude-dev` - Full development mode
+   - `claude-safe` - Default permissions
+   - `claude-readonly` - Investigation only
+   - `claude-full` - Skip all permissions (use carefully!)
 
 ## Benefits
 
@@ -43,6 +50,26 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 - **Quality**: Built-in code review process ensures high-quality outputs
 - **Accuracy**: Truthfulness framework prevents hallucinations and assumptions
 - **Efficiency**: Clear guidelines help Claude work more effectively
+
+## Global Settings Configuration
+
+The `settings.json` file allows pre-approving safe commands globally:
+- Git commands (excluding `--hard` reset)
+- Git worktree operations
+- GitHub CLI (gh) commands
+- Package managers (npm, npx, yarn, pip)
+- Build and test tools
+- Safe file operations
+
+## Code Review Context Handover
+
+The enhanced code review process requires structured context to prevent "sidetracking":
+- Session context and original user request
+- Files modified with reasoning
+- Key decisions and code patterns followed
+- Testing considerations and blockers
+
+This approach is inspired by the HANDOVER.md pattern for session continuity.
 
 ## Contributing
 

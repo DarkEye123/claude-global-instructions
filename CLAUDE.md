@@ -25,20 +25,52 @@
 
 ## Automatic Code Review Process
 
-### When You Make Code Changes:
+### MANDATORY: Trigger Code Review After ANY Change
 
-1. **After implementing** any feature, bugfix, or code modification
-2. **Automatically spawn** a code review sub-agent using the Task tool
-3. **Code review agent will**:
-   - Analyze the changes for security, performance, style, and best practices
-   - Create `/code-review.md` (or incremental versions like `/code-review-1.md`, `/code-review-2.md`)
-   - Return findings to the main agent
-4. **Before implementing review suggestions**:
-   - Stage and commit your current changes with message: `<changes summary> (before code-review-X)`
-   - Where X is the feedback iteration version (1, 2, 3...)
-   - This preserves your acceptable implementation before code review modifications
-5. **Implement review suggestions** before considering the task complete
-6. **Repeat if necessary** until code meets quality standards
+You MUST spawn a code review sub-agent after ANY file modification including:
+- Code changes (any Edit/MultiEdit/Write operation)
+- Documentation updates (README, comments, etc.)
+- Configuration changes
+- Even single character typo fixes
+
+### Critical: Provide Structured Context Handover
+
+When spawning the code review agent, use this template adapted from HANDOVER.md:
+
+```
+Please review my changes with this context:
+
+## Session Context
+**Primary Task**: [What user asked you to do]
+**Original Request**: [Exact user request]
+
+## Work Completed
+### Files Modified
+- `path/to/file`: [What was changed and why]
+
+### Key Decisions & Reasoning
+- [Important choices made and rationale]
+
+### Code Patterns Followed
+- [Existing patterns you adhered to]
+
+## Testing Considerations
+- [How changes should be tested]
+- [Potential edge cases]
+
+## Blockers/Concerns
+- [Any issues you encountered]
+
+Review for: security, performance, best practices, and correctness.
+Create /code-review-X.md with findings.
+```
+
+### Before Implementing Review Feedback:
+1. **Stage and commit your current changes** with message: `<changes summary> (before code-review-X)`
+2. Where X is the feedback iteration version (1, 2, 3...)
+3. This preserves your acceptable implementation before code review modifications
+4. **Implement review suggestions** before considering the task complete
+5. **Repeat if necessary** until code meets quality standards
 
 ### Code Review Focus Areas:
 
@@ -80,3 +112,12 @@ When working in specific parts of the codebase, assess if that area would benefi
 4. Note what wouldn't be duplicated from root CLAUDE.md
 
 Example: "I recommend creating `/frontend/src/service-worker/CLAUDE.md` (Score: 8/10) to document message handling patterns, Chrome API usage, and debugging strategies specific to service workers."
+
+## Context is King
+
+Always provide sufficient context when:
+- Spawning sub-agents (especially code review)
+- Asking for help or clarification
+- Documenting decisions
+
+Poor context leads to poor outcomes. Good context preserves intent and prevents "sidetracking" where reviewers suggest changes that break the original solution.

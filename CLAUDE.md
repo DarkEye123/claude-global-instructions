@@ -33,6 +33,15 @@ You MUST spawn a code review sub-agent after ANY file modification including:
 - Configuration changes
 - Even single character typo fixes
 
+### User Notification Requirements
+
+When initiating a code review:
+1. **Always notify the user** that you are starting the code review process
+2. **Share the feedback** from the code review with the user once complete
+3. **Keep the user informed** about any changes you make based on the review
+
+Example notification: "I've completed the changes. Starting code review now to ensure quality and best practices..."
+
 ### Critical: Provide Structured Context Handover
 
 When spawning the code review agent, use this template adapted from HANDOVER.md:
@@ -71,6 +80,40 @@ Create /code-review-X.md with findings.
 3. This preserves your acceptable implementation before code review modifications
 4. **Implement review suggestions** before considering the task complete
 5. **Repeat if necessary** until code meets quality standards
+
+### Documenting Implementation Decisions:
+
+After receiving code review feedback, you MUST:
+1. **Create an implementation status document** `/code-review-X-implementation.md` in the project root (alongside the code review file)
+2. **Document your reasoning** for each suggestion:
+   - Which suggestions were implemented and why
+   - Which suggestions were not implemented with justification
+   - Which suggestions were partially implemented with explanation
+   - Any modifications made to the suggestions
+
+Example format:
+```markdown
+# Code Review Implementation Status
+
+Based on: `/code-review-2.md`
+Date: 2024-01-15 14:30 UTC
+
+## Implemented Suggestions:
+- **Variable renaming (lines 45-47)**: Implemented. Improved code clarity significantly.
+- **Error handling addition**: Implemented with modifications. Added try-catch but used project's custom error handler.
+
+## Partially Implemented:
+- **Refactor database queries**: Partially implemented. Applied optimization to the main query but deferred secondary queries to a future sprint due to time constraints.
+
+## Not Implemented:
+- **Performance optimization using Map**: Not implemented. The performance gain is minimal (< 0.1ms) while adding 20+ lines of complexity.
+- **Extract to separate function**: Not implemented. The logic is only used once and extraction would reduce readability in this context.
+
+## Summary:
+Implemented 2/5 suggestions, partially implemented 1/5, skipped 2/5. Code maintains clarity while avoiding unnecessary complexity.
+```
+
+3. **Share this document with the user** along with the code review results
 
 ### Code Review Focus Areas:
 

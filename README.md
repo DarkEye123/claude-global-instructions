@@ -16,9 +16,11 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 
 ### Automatic Code Review Process
 - **MANDATORY** for ALL changes (code, docs, configs, even typos)
+- **User notification required** when starting code review and sharing feedback
 - Requires structured context handover to prevent misleading reviews
 - Uses checkpoint commits before implementing feedback
 - Creates `/code-review-X.md` documentation
+- **Creates `/code-review-X-implementation.md`** documenting which suggestions were implemented/skipped with reasoning
 - Focuses on security, performance, and best practices
 
 ### Important Instruction Reminders
@@ -70,6 +72,15 @@ The enhanced code review process requires structured context to prevent "sidetra
 - Testing considerations and blockers
 
 This approach is inspired by the HANDOVER.md pattern for session continuity.
+
+## Implementation Decision Documentation
+
+After receiving code review feedback, agents must document their implementation decisions:
+- **What was implemented**: With reasoning for why it improves the code
+- **What was not implemented**: With justification (e.g., minimal benefit vs. complexity)
+- **What was modified**: When suggestions were adapted to fit project patterns
+
+This creates a transparent record of decision-making and helps users understand the rationale behind code changes.
 
 ## Contributing
 

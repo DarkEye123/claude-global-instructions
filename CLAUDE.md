@@ -13,6 +13,36 @@ ON_CONVERSATION_START:
     LOG: "Starting with clean code-reviews directory"
 ```
 
+## Self-Review vs External Review Detection
+
+```yaml
+SELF_REVIEW_SCOPE:
+  TRIGGER_FOR: ANY change authored by agent
+  INCLUDING:
+    - Code files (*.js, *.py, *.ts, etc.)
+    - Configuration files (*.json, *.yaml, *.toml)
+    - Documentation (*.md including CLAUDE.md and README.md)
+    - Scripts, tests, any file type
+  WHEN: Agent uses Edit, MultiEdit, Write, or NotebookEdit tools
+  THEN: ALWAYS trigger self-review cycle
+
+EXTERNAL_REVIEW_DETECTION:
+  TRIGGER_PHRASES:
+    - "review this pr"
+    - "do a review"
+    - "do a code-review"
+    - "review this code"
+    - "can you review"
+    - "check this pr"
+    - "analyze this code"
+  WHEN_DETECTED: User is asking for review of EXTERNAL code
+  THEN: Perform requested review ONLY, no self-review cycle
+  
+CLARIFICATION:
+  - Self-review: For changes I MAKE during conversation
+  - External review: For code I'm ASKED TO REVIEW but didn't write
+```
+
 ## State Machine Definition
 
 ```yaml
@@ -31,10 +61,24 @@ STATES:
   - EXIT_LOOP
 
 TRIGGER_CONDITIONS:
-  Tool: Edit → Action: SPAWN_CODE_REVIEW
-  Tool: MultiEdit → Action: SPAWN_CODE_REVIEW
-  Tool: Write → Action: SPAWN_CODE_REVIEW
-  Tool: NotebookEdit → Action: SPAWN_CODE_REVIEW
+  PRIMARY_RULE: ANY file modification by agent triggers self-review
+  TOOLS_THAT_TRIGGER:
+    - Edit → Action: SPAWN_CODE_REVIEW
+    - MultiEdit → Action: SPAWN_CODE_REVIEW
+    - Write → Action: SPAWN_CODE_REVIEW
+    - NotebookEdit → Action: SPAWN_CODE_REVIEW
+  APPLIES_TO: ALL files without exception (including CLAUDE.md, README.md, configs, etc.)
+
+TRIGGER_EXCEPTIONS:
+  ONLY_EXCEPTION: When in external code review context
+  DETECTION: User explicitly requests review of code they provide
+  DETECTED_BY: ["review this pr", "do a review", "do a code-review", "review this code", "can you review"]
+  THEN: SKIP_SELF_REVIEW_CYCLE
+  ACTION: PERFORM_REQUESTED_REVIEW_ONLY
+  
+IMPORTANT_DISTINCTION:
+  - "Fix CLAUDE.md" → I edit file → TRIGGERS self-review
+  - "Review this PR" → I analyze external code → NO self-review
 
 PLAN_MODE_HANDLING:
   WHEN: plan_mode_active
@@ -46,8 +90,9 @@ PLAN_MODE_HANDLING:
 
 STATE_TRANSITIONS:
   IDLE:
-    ON: user_request_involving_files AND plan_mode_active → GOTO: PLAN_PRESENTATION
-    ON: user_request_involving_files AND NOT plan_mode_active → GOTO: CREATE_TASK_MD
+    ON: user_request_involving_files AND plan_mode_active AND NOT external_review_request → GOTO: PLAN_PRESENTATION
+    ON: user_request_involving_files AND NOT plan_mode_active AND NOT external_review_request → GOTO: CREATE_TASK_MD
+    ON: external_review_request → STAY: IDLE (perform review without state machine)
   
   PLAN_PRESENTATION:
     ACTION: Present plan to user using exit_plan_mode tool
@@ -73,8 +118,10 @@ STATE_TRANSITIONS:
     ON: success → GOTO: IMPLEMENTATION
   
   IMPLEMENTATION:
-    ON: any_file_modification → GOTO: NOTIFY_REVIEW_START
-    INCLUDES: [code_changes, documentation_updates, config_modifications, any_file_edits]
+    ON: any_file_modification_by_agent → GOTO: NOTIFY_REVIEW_START
+    EXCEPTION: external_review_context → STAY: IMPLEMENTATION (no self-review)
+    INCLUDES: [ALL file types - code, docs, configs, CLAUDE.md, README.md, everything]
+    CONTEXT_CHECK: If user asked for external code review, skip self-review cycle
   
   NOTIFY_REVIEW_START:
     ACTION: output("I've completed the changes. Starting code review now to ensure quality and best practices...")
@@ -484,7 +531,13 @@ CORE_PRINCIPLES:
   - Do exactly what was asked, nothing more
   - Prefer editing to creating files
   - Never create documentation unless requested
-  - Review is MANDATORY after ANY change (including documentation/config)
+  - Self-review is MANDATORY after ANY file change by agent (including CLAUDE.md)
+  - External review requests should NOT trigger self-review cycle
   - Decision-helper has final say on scope
   - In plan mode: Present plan first, then CREATE_TASK_MD immediately after approval
+  
+REVIEW_TRIGGER_RULES:
+  - ANY_AGENT_CHANGE: If I edit/write ANY file → ALWAYS self-review
+  - EXTERNAL_REVIEW: If user asks me to review external code → NO self-review
+  - NO_EXCEPTIONS: Even CLAUDE.md and README.md changes trigger self-review
 ```

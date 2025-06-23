@@ -28,9 +28,10 @@ The `CLAUDE.md` file in this repository provides consistent guidance and framewo
 - **Comprehensive human-readable summary**: `iteration-summary.md` serves as a complete aggregator of all review details, updated in-place after each iteration. Contains full code review suggestions, decision-helper evaluations with reasoning, implementation decisions, and all deferred proposals with context - eliminating the need to check multiple files
 
 ### Truthfulness Framework
-- **Verification requirements**: Explicit commands before any claims
-- **Forbidden phrases**: List of ambiguous terms that must never be used
-- **Required phrases**: Exact strings for expressing uncertainty
+- **Core principles**: Verify before claiming, escalate when uncertain, document exact findings
+- **Clear DO/DON'T lists**: Human-readable guidance on required and forbidden behaviors
+- **Practical examples**: Real scenarios showing when to escalate or verify
+- **Natural language approach**: Conversational guidelines that are immediately actionable
 
 ### Error Recovery
 - **Defined error states**: Each error has detection criteria and recovery action

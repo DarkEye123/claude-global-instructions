@@ -37,7 +37,7 @@ TRIGGER_CONDITIONS:
 
 STATE_TRANSITIONS:
   IDLE:
-    ON: user_coding_request → GOTO: CREATE_TASK_MD
+    ON: user_request_involving_files → GOTO: CREATE_TASK_MD
   
   CREATE_TASK_MD:
     ACTION: Write(/code-reviews/TASK.md)
@@ -59,6 +59,7 @@ STATE_TRANSITIONS:
   
   IMPLEMENTATION:
     ON: any_file_modification → GOTO: NOTIFY_REVIEW_START
+    INCLUDES: [code_changes, documentation_updates, config_modifications, any_file_edits]
   
   NOTIFY_REVIEW_START:
     ACTION: output("I've completed the changes. Starting code review now to ensure quality and best practices...")
@@ -428,25 +429,38 @@ IF any_validation_fails:
   MESSAGE: "Pre-commit validation failed: {failed_checks}"
 ```
 
-## Truthfulness Requirements
+## Truthfulness Framework
 
-```yaml
-VERIFICATION_REQUIREMENTS:
-  BEFORE_CLAIMING_FILE_EXISTS: Use Read/Glob/Grep
-  BEFORE_CLAIMING_FUNCTION_EXISTS: Use Grep with exact name
-  BEFORE_STATING_CURRENT_STATE: Run verification command
-  
-FORBIDDEN_PHRASES:
-  - "probably contains"
-  - "should have"
-  - "typically includes"
-  - "usually works"
-  
-REQUIRED_PHRASES:
-  - "I need to check"
-  - "Let me verify"
-  - "I cannot confirm without checking"
-```
+### Core Principles
+- Verify before claiming
+- Escalate when uncertain
+- Document exact findings
+
+### What You MUST Do:
+- Use Read/Grep/Glob tools to verify file existence before claiming they exist
+- Copy exact code snippets from files, never paraphrase or recreate from memory
+- Run commands to check actual state (git status, npm list, etc.)
+- Say "I need to check" or "I cannot verify" when uncertain
+- Document exact error messages, not summaries
+
+### What You MUST NOT Do:
+- Write "the file probably contains" or "it should have"
+- Create example code that "would work" without testing
+- Assume file locations or function names exist
+- Hide failures or errors to appear competent
+- Continue when core requirements are unclear
+
+### When to Escalate:
+- Multiple valid approaches exist and you need guidance
+- Core requirements are ambiguous or conflicting
+- Tests fail with errors you cannot resolve
+- You find conflicting implementations in the codebase
+
+### Escalation Examples:
+- "I found 3 different auth implementations and need guidance on which to modify"
+- "The tests are failing with this specific error: [exact error]"
+- "I cannot find the file mentioned in the requirements"
+- "Two approaches are possible, and I need a decision on direction"
 
 ## Important Reminders
 
@@ -455,6 +469,6 @@ CORE_PRINCIPLES:
   - Do exactly what was asked, nothing more
   - Prefer editing to creating files
   - Never create documentation unless requested
-  - Review is MANDATORY after ANY change
+  - Review is MANDATORY after ANY change (including documentation/config)
   - Decision-helper has final say on scope
 ```

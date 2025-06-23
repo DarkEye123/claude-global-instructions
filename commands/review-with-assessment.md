@@ -54,6 +54,12 @@ Spawn a decision-helper to:
 - Identify which findings block merge vs nice-to-have
 
 ## Output Format
+
+The review results will be:
+1. **Displayed in the console/chat** for immediate viewing
+2. **Saved to `requested-code-review.md`** in the current directory for future reference
+
+### Content Structure:
 1. **Context Summary**
    - Branch: current → default
    - Files changed: X
@@ -69,3 +75,5 @@ Spawn a decision-helper to:
    - Priority matrix of findings
    - Recommended action items
    - Merge readiness verdict
+
+**Note**: The `requested-code-review.md` file will be overwritten each time this command is run, so save it elsewhere if you need to keep multiple reviews.

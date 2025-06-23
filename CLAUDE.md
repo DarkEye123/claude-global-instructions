@@ -36,7 +36,10 @@ EXTERNAL_REVIEW_DETECTION:
     - "check this pr"
     - "analyze this code"
   WHEN_DETECTED: User is asking for review of EXTERNAL code
-  THEN: Perform requested review ONLY, no self-review cycle
+  THEN: 
+    - Perform requested review ONLY, no self-review cycle
+    - IF PR_number_available: Use `gh pr view {number} --comments` to check PR comments
+    - INCLUDE: PR comments in review context for better understanding
   
 CLARIFICATION:
   - Self-review: For changes I MAKE during conversation
@@ -138,6 +141,11 @@ STATE_TRANSITIONS:
       **Primary Task**: {task_from_TASK_md}
       **Original Request**: {exact_user_request}
       **Task Constraints**: {out_of_scope_from_TASK_md}
+      
+      ## PR Context (if available)
+      1. Check current git branch for PR reference (e.g., feat/CHE-1234/description)
+      2. If on a PR branch, run: gh pr view --comments
+      3. Include relevant PR comments in your review context
       
       ## Work Completed
       ### Files Modified

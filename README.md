@@ -62,14 +62,22 @@ The `settings.json` file allows pre-approving safe commands globally:
 ## Code Review State Machine
 
 The code review process follows a deterministic state machine:
-1. **CREATE_TASK_MD**: Document exact requirements before any work
-2. **IMPLEMENTATION**: Make changes
-3. **SPAWN_CODE_REVIEW**: Trigger review with structured context
-4. **SPAWN_DECISION_HELPER**: Evaluate suggestions against original task
-5. **CHECK_COMPLETION**: Use verdict matrix to determine next state
-6. **EXIT_LOOP** or **IMPLEMENT_SUGGESTIONS**: Based on scores
+1. **PLAN_PRESENTATION** (if in plan mode): Present plan using exit_plan_mode tool
+2. **CREATE_TASK_MD**: Document exact requirements before any work (immediately after plan approval)
+3. **IMPLEMENTATION**: Make changes
+4. **SPAWN_CODE_REVIEW**: Trigger review with structured context
+5. **SPAWN_DECISION_HELPER**: Evaluate suggestions against original task
+6. **CHECK_COMPLETION**: Use verdict matrix to determine next state
+7. **EXIT_LOOP** or **IMPLEMENT_SUGGESTIONS**: Based on scores
 
 All transitions are explicit with no room for interpretation.
+
+### Plan Mode Handling
+
+When plan mode is active:
+- The state machine defers CREATE_TASK_MD until after plan approval
+- Upon plan approval, immediately creates TASK.md before starting implementation
+- This ensures the code review process always has documented requirements, even when starting from plan mode
 
 ## Task Documentation Requirement
 

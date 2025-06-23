@@ -18,6 +18,7 @@ ON_CONVERSATION_START:
 ```yaml
 STATES:
   - IDLE
+  - PLAN_PRESENTATION
   - CREATE_TASK_MD
   - IMPLEMENTATION
   - NOTIFY_REVIEW_START
@@ -35,9 +36,23 @@ TRIGGER_CONDITIONS:
   Tool: Write → Action: SPAWN_CODE_REVIEW
   Tool: NotebookEdit → Action: SPAWN_CODE_REVIEW
 
+PLAN_MODE_HANDLING:
+  WHEN: plan_mode_active
+  THEN: 
+    - DEFER: CREATE_TASK_MD until after plan approval
+    - ON_PLAN_APPROVAL: 
+      - IMMEDIATE: CREATE_TASK_MD
+      - THEN: GOTO: IMPLEMENTATION
+
 STATE_TRANSITIONS:
   IDLE:
-    ON: user_request_involving_files → GOTO: CREATE_TASK_MD
+    ON: user_request_involving_files AND plan_mode_active → GOTO: PLAN_PRESENTATION
+    ON: user_request_involving_files AND NOT plan_mode_active → GOTO: CREATE_TASK_MD
+  
+  PLAN_PRESENTATION:
+    ACTION: Present plan to user using exit_plan_mode tool
+    ON: plan_approved → GOTO: CREATE_TASK_MD
+    ON: plan_rejected → GOTO: IDLE
   
   CREATE_TASK_MD:
     ACTION: Write(/code-reviews/TASK.md)
@@ -471,4 +486,5 @@ CORE_PRINCIPLES:
   - Never create documentation unless requested
   - Review is MANDATORY after ANY change (including documentation/config)
   - Decision-helper has final say on scope
+  - In plan mode: Present plan first, then CREATE_TASK_MD immediately after approval
 ```

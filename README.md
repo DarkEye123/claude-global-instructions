@@ -72,6 +72,20 @@ The code review process follows a deterministic state machine:
 
 All transitions are explicit with no room for interpretation.
 
+## Available Commands
+
+### `/loop` - Full State Machine Documentation
+The comprehensive state machine documentation with detailed explanations of each state, transitions, file templates, and examples. Use this for understanding the complete review process.
+
+### `/cloop` - Compact Loop Review
+A condensed version of the loop command that maintains all essential functionality:
+- Same state machine flow and verdict matrix
+- Identical scoring system (≥7 implement, 4-6 defer, <4 skip)
+- All required file outputs and naming conventions
+- Reduced from ~1400 lines to ~150 lines while preserving all critical logic
+
+Both commands execute the exact same review process - `/cloop` simply presents it more concisely.
+
 ### Plan Mode Handling
 
 When plan mode is active:

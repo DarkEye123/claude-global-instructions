@@ -2,37 +2,60 @@
 
 Perform a comprehensive code review based on the current context, then assess the findings with a decision-helper.
 
-## Context Detection
-First, I'll determine what to review by checking:
-- Current git branch and its changes
-- Default/main branch (auto-detected)
-- Any Linear issue reference in branch name
-- Uncommitted changes (if any)
-- Recent commits on this branch
+## Context Detection (Main Agent)
+I'll gather minimal context to pass to the review task:
+- Current branch name: `git branch --show-current`
+- Default branch: `git symbolic-ref refs/remotes/origin/HEAD`
 - Any specific areas mentioned: $ARGUMENTS
 
-## Review Process
+## Review Process (Main Agent Orchestration)
 
-### Step 1: Gather Context
-1. **Detect default branch**:
-   - Check git remote HEAD: `git symbolic-ref refs/remotes/origin/HEAD`
-   - Fallback detection: check for origin/main, origin/master, origin/develop
-   - Use detected branch as comparison base
+**Flow Overview**: The main agent orchestrates the entire process by:
+1. Gathering minimal context
+2. Spawning code review task
+3. Receiving code review results
+4. Spawning decision-helper task with review results
+5. Presenting final combined output
 
-2. **Analyze current branch**:
-   - Current branch name: `git branch --show-current`
-   - Extract Linear/Jira ID if present (e.g., feat/LIN-123-feature)
+### Step 1: Spawn Code Review Task
+The main agent will spawn a code review task with minimal context following a handoff pattern:
+
+**Handoff Information** (following HANDOVER.md structure):
+```yaml
+Work Completed (by Main Agent):
+  - Current branch name: obtained via `git branch --show-current`
+  - Default branch: obtained via `git symbolic-ref refs/remotes/origin/HEAD`
+  - Review focus: extracted from $ARGUMENTS
+
+Current Task (for Code Review Agent):
+  - Load full git diff between branches
+  - Extract Linear/Jira issue ID from branch name
+  - Analyze all changed files
+  - Perform comprehensive code review
+
+Key Decision:
+  - Main agent does NOT pre-analyze changes
+  - All heavy lifting delegated to spawned task
+  - This prevents duplicate work and improves efficiency
+```
+
+### Step 2: Detailed Analysis (Code Review Task)
+The spawned code review agent will:
+1. **Gather full context**:
+   - Extract Linear/Jira ID from branch name (e.g., feat/LIN-123-feature)
+   - Load Linear issue for additional context if available
    - Compare with default: `git diff origin/{default}...HEAD`
    - List changed files: `git diff --name-only origin/{default}...HEAD`
    - Check uncommitted changes: `git status --porcelain`
+   - Read and analyze all changed files
 
-3. **Determine review scope**:
+2. **Determine review scope**:
    - All changes between current branch and default branch
    - Include both committed and uncommitted changes
-   - Focus on areas mentioned in $ARGUMENTS if provided
+   - Focus on areas mentioned in arguments if provided
 
-### Step 2: Comprehensive Code Review
-Review all detected changes for:
+### Step 3: Comprehensive Code Review
+The code review agent will examine all detected changes for:
 - Security vulnerabilities
 - Performance implications
 - Best practices adherence
@@ -44,8 +67,8 @@ Review all detected changes for:
 
 **Note**: If a project-specific CLAUDE.md exists, I will also check for and apply any custom review criteria defined there.
 
-### Step 3: Decision-Helper Assessment
-Spawn a decision-helper to:
+### Step 4: Decision-Helper Assessment
+After receiving the code review results, the main agent will spawn a decision-helper to:
 - Evaluate each review finding objectively
 - Score findings by actual impact (0-10)
 - Distinguish between critical issues and preferences

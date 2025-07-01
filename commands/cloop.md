@@ -30,7 +30,7 @@ TRIGGERS:
 
 ### CREATE_TASK_MD
 ```yaml
-ACTION: Write(/code-reviews/TASK.md)
+ACTION: Write(./code-reviews/TASK.md)
 CONTENT:
   # Task: {brief_description}
   ## Original Request
@@ -46,14 +46,14 @@ CONTENT:
 ### SPAWN_CODE_REVIEW
 ```yaml
 ACTION: Task("Review my changes with context from TASK.md")
-OUTPUT: /code-reviews/code-review-{iteration}.md
+OUTPUT: ./code-reviews/code-review-{iteration}.md
 FOCUS: security, performance, best practices, correctness
 ```
 
 ### SPAWN_DECISION_HELPER
 ```yaml
 ACTION: Task("Evaluate code review suggestions against TASK.md")
-OUTPUT: /code-reviews/decision-helper-{iteration}.md
+OUTPUT: ./code-reviews/decision-helper-{iteration}.md
 SCORING: 0-10 relevance scale
   ≥7: MUST implement
   4-6: Defer to escalations
@@ -72,7 +72,7 @@ SCORING: 0-10 relevance scale
 
 ## File Structure
 ```
-/code-reviews/
+./code-reviews/
   TASK.md                          # Always first
   iteration-summary.md             # Updated each iteration
   code-review-{n}.md              # n = 1,2,3...
@@ -83,7 +83,7 @@ SCORING: 0-10 relevance scale
 
 ## Quick Reference
 
-1. **Setup**: Clean `/code-reviews/` directory
+1. **Setup**: Clean `./code-reviews/` directory
 2. **Document**: Create TASK.md with exact requirements
 3. **Implement**: Make requested changes
 4. **Review**: Spawn code review agent

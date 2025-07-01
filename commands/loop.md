@@ -100,7 +100,7 @@ This critical state ensures I document exactly what I'm supposed to do, creating
 
 ```yaml
 CREATE_TASK_MD:
-  ACTION: Write(/code-reviews/TASK.md)
+  ACTION: Write(./code-reviews/TASK.md)
   TEMPLATE: |
     # Task: {brief_description}
     
@@ -119,7 +119,7 @@ CREATE_TASK_MD:
 ```
 
 **What I do here:**
-1. Create `/code-reviews/TASK.md` with your exact request
+1. Create `./code-reviews/TASK.md` with your exact request
 2. Document the approved approach
 3. Clearly define what's in and out of scope
 4. This becomes the reference for all subsequent reviews
@@ -197,7 +197,7 @@ This is where I spawn a sub-agent to review my changes objectively.
 ```yaml
 SPAWN_CODE_REVIEW:
   IF iteration == 1:
-    ACTION: Write(/code-reviews/iteration-summary.md, initial_template)
+    ACTION: Write(./code-reviews/iteration-summary.md, initial_template)
   ACTION: Task(code_review_prompt)
   PROMPT_TEMPLATE: |
     Please review my changes with this context:
@@ -354,7 +354,7 @@ This state maintains a running summary of all review iterations. This was missin
 
 ```yaml
 UPDATE_ITERATION_SUMMARY:
-  ACTION: Edit(/code-reviews/iteration-summary.md)
+  ACTION: Edit(./code-reviews/iteration-summary.md)
   UPDATE_WITH: latest_review_and_decision_results
   ON: complete → GOTO: CHECK_COMPLETION
 ```
@@ -407,8 +407,8 @@ When critical suggestions need implementation, this state handles them.
 IMPLEMENT_SUGGESTIONS:
   ACTION: output("Based on the decision-helper scores, I'll implement suggestions scoring 7+ and document others in the escalations file...")
   IMPLEMENT: all suggestions with score >= 7
-  CREATE: /code-reviews/code-review-{iteration}-implementation.md
-  CREATE: /code-reviews/possible-escalations-{iteration}.md (if any scores 4-6)
+  CREATE: ./code-reviews/code-review-{iteration}-implementation.md
+  CREATE: ./code-reviews/possible-escalations-{iteration}.md (if any scores 4-6)
   INCREMENT: iteration
   ON: complete → GOTO: NOTIFY_REVIEW_START
 ```
@@ -509,7 +509,7 @@ SCORE_ACTIONS:
   
   score >= 4.0 AND score < 7.0:
     ACTION: DEFER_TO_ESCALATIONS
-    FILE: /code-reviews/possible-escalations-{iteration}.md
+    FILE: ./code-reviews/possible-escalations-{iteration}.md
     PRIORITY: LOW
     OPTIONAL: TRUE
   
@@ -894,7 +894,7 @@ The decision helper creates an assessment of each suggestion:
 # Decision Helper Assessment - Iteration {number}
 
 Date: {timestamp}
-Task Reference: /code-reviews/TASK.md
+Task Reference: ./code-reviews/TASK.md
 
 ## Original Task Summary
 {Brief recap of what was requested}
@@ -1054,7 +1054,7 @@ The code-reviews directory must maintain a specific structure for the process to
 
 ```yaml
 REQUIRED_STRUCTURE:
-  /code-reviews/
+  ./code-reviews/
     TASK.md                                    # ALWAYS first, no variations
     iteration-summary.md                       # Human-readable summary, updated each iteration
     code-review-{n}.md                         # n = 1,2,3... (integer)
@@ -1077,7 +1077,7 @@ FILE_NAMING:
 
 **Example directory after 2 iterations:**
 ```
-/code-reviews/
+./code-reviews/
   TASK.md
   iteration-summary.md
   code-review-1.md
@@ -1135,7 +1135,7 @@ If I need TASK.md but it doesn't exist (perhaps deleted or never created):
 
 ```yaml
 MISSING_TASK_MD:
-  DETECTION: !exists(/code-reviews/TASK.md)
+  DETECTION: !exists(./code-reviews/TASK.md)
   ACTION: CREATE_FROM_CONTEXT → RESTART_REVIEW
   MESSAGE: "Creating TASK.md from conversation context"
 ```
@@ -1186,7 +1186,7 @@ Before committing any changes, I must validate that the review process completed
 
 ```yaml
 PRE_COMMIT_VALIDATION:
-  exists(/code-reviews/TASK.md): REQUIRED
+  exists(./code-reviews/TASK.md): REQUIRED
   latest_review_verdict == "APPROVED": REQUIRED
   latest_decision_verdict == "APPROVED": REQUIRED
   all_scores_7plus_implemented(): REQUIRED
@@ -1311,7 +1311,7 @@ Review process complete. All critical issues addressed.
 
 **Files Created During Process:**
 ```
-/code-reviews/
+./code-reviews/
   TASK.md
   iteration-summary.md
   code-review-1.md
@@ -1355,7 +1355,7 @@ For quick lookup, here's the complete state flow:
 When this command is executed, follow these steps:
 
 1. **Clean Setup**
-   - Check if `/code-reviews/` exists
+   - Check if `./code-reviews/` exists
    - If exists: Delete all *.md files
    - If not: Create directory
 

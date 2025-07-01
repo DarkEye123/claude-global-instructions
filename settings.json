@@ -1,5 +1,4 @@
 {
-  "model": "opus",
   "permissions": {
     "allow": [
       "Bash(git status)",
@@ -52,5 +51,6 @@
       "Bash(mv*)",
       "Bash(cp*)"
     ]
-  }
+  },
+  "model": "opus"
 }

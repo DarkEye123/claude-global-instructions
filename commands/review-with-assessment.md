@@ -28,10 +28,12 @@ Work Completed (by Main Agent):
   - Review focus: extracted from $ARGUMENTS
 
 Current Task (for Code Review Agent):
+  - Check if on PR branch and load PR comments via `gh pr view --comments`
   - Load full git diff between branches
   - Extract Linear/Jira issue ID from branch name
   - Analyze all changed files
   - Perform comprehensive code review
+  - Create code-review.md with findings
 
 Key Decision:
   - Main agent does NOT pre-analyze changes
@@ -42,6 +44,8 @@ Key Decision:
 ### Step 2: Detailed Analysis (Code Review Task)
 The spawned code review agent will:
 1. **Gather full context**:
+   - Check current git branch for PR reference
+   - If on a PR branch, run: `gh pr view --comments` to get PR comments
    - Extract Linear/Jira ID from branch name (e.g., feat/LIN-123-feature)
    - Load Linear issue for additional context if available
    - Compare with default: `git diff origin/{default}...HEAD`
@@ -65,10 +69,13 @@ The code review agent will examine all detected changes for:
 - Testing coverage
 - Breaking changes or API compatibility
 
+**Output**: The code review agent will create a `code-review.md` file with all findings, categorized by severity and impact.
+
 **Note**: If a project-specific CLAUDE.md exists, I will also check for and apply any custom review criteria defined there.
 
 ### Step 4: Decision-Helper Assessment
 After receiving the code review results, the main agent will spawn a decision-helper to:
+- Read the `code-review.md` file
 - Evaluate each review finding objectively
 - Score findings by actual impact (0-10)
 - Distinguish between critical issues and preferences
@@ -76,27 +83,39 @@ After receiving the code review results, the main agent will spawn a decision-he
 - Consider effort vs benefit trade-offs
 - Identify which findings block merge vs nice-to-have
 
-## Output Format
+**Output**: The decision-helper will create a `decision-helper.md` file with the assessment and scoring of each finding.
 
-The review results will be:
-1. **Displayed in the console/chat** for immediate viewing
-2. **Saved to `requested-code-review.md`** in the current directory for future reference
+## Step 5: Final Summary Creation
+After both spawned tasks complete, the main agent will:
+1. Read both `code-review.md` and `decision-helper.md`
+2. Create a comprehensive `code-review-summary.md` that combines insights from both reports
+3. Display key findings in the console for immediate viewing
 
-### Content Structure:
-1. **Context Summary**
-   - Branch: current → default
-   - Files changed: X
-   - Lines: +X -Y
-   - Linear/Jira issue: (if found)
+## Output Files
 
-2. **Code Review Findings**
-   - Critical issues
-   - Important improvements
-   - Suggestions
+Three files will be created in the current directory:
 
-3. **Decision-Helper Assessment**
-   - Priority matrix of findings
-   - Recommended action items
-   - Merge readiness verdict
+### 1. `code-review.md`
+Created by the code review agent, containing:
+- Context summary (branch, files changed, PR comments if available)
+- Detailed findings categorized by severity
+- Security, performance, and best practice observations
+- Specific code locations and recommendations
 
-**Note**: The `requested-code-review.md` file will be overwritten each time this command is run, so save it elsewhere if you need to keep multiple reviews.
+### 2. `decision-helper.md`
+Created by the decision-helper agent, containing:
+- Objective assessment of each code review finding
+- Relevance scores (0-10) for each suggestion
+- Priority categorization (critical/important/nice-to-have)
+- Implementation recommendations
+- Merge readiness verdict
+
+### 3. `code-review-summary.md`
+Created by the main agent, containing:
+- Executive summary combining both perspectives
+- Prioritized action items based on decision-helper scores
+- Critical issues that must be addressed
+- Optional improvements for consideration
+- Overall merge recommendation with rationale
+
+**Note**: All three files will be overwritten each time this command is run. Save them elsewhere if you need to keep multiple reviews.

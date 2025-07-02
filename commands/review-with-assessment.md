@@ -72,6 +72,11 @@ The code review agent will examine all detected changes for:
 
 **Output**: The code review agent will create a `code-review.md` file with all findings, categorized by severity and impact. Each finding MUST include VSCode-compatible file references in the format `path/to/file:line` or `path/to/file:line:column` so users can click to navigate directly to the code being discussed.
 
+**CRITICAL**: File references must be inline with the text, NOT in parentheses. For example:
+- ❌ WRONG: "The logic flaw (src/utils.ts:340) causes..."
+- ✅ CORRECT: "The logic flaw in `src/utils.ts:340` causes..."
+- ✅ CORRECT: "Check the function at `src/utils.ts:340-354`"
+
 **Note**: If a project-specific CLAUDE.md exists, I will also check for and apply any custom review criteria defined there.
 
 ### Step 4: Decision-Helper Assessment
@@ -124,26 +129,34 @@ Created by the main agent, containing:
 
 ## VSCode-Compatible Link Format
 
-All code references in the output files MUST use VSCode-compatible clickable links:
+All code references in the output files MUST use Markdown link format with `#L` for line numbers:
 
 ### Format Examples:
-- `src/auth/login.js:42` - Opens login.js at line 42
-- `src/auth/login.js:42:15` - Opens login.js at line 42, column 15
-- `./config/settings.json:10` - Relative path to settings.json, line 10
+- `[utils.ts](src/views/general/Checkout/utils.ts#L340)` - Opens utils.ts at line 340
+- `[login.js line 42](src/auth/login.js#L42)` - Opens login.js at line 42
+- `[settings.json](./config/settings.json#L10)` - Relative path to settings.json, line 10
+- `[utils.ts lines 340-354](src/views/general/Checkout/utils.ts#L340)` - Reference to a code block
 
 ### Example Output in code-review.md:
 ```markdown
 ## Critical Issues
 
-1. **SQL Injection Vulnerability**
-   - Location: `src/database/queries.js:156`
-   - Issue: User input directly concatenated into SQL query
-   - Recommendation: Use parameterized queries
+1. **SQL Injection Vulnerability** 
+   The user input is directly concatenated into the SQL query at [queries.js](src/database/queries.js#L156), creating a serious security risk. This should use parameterized queries instead.
 
 2. **Missing Error Handling**
-   - Location: `src/api/users.js:78:20`
-   - Issue: Async operation without try-catch
-   - Impact: Unhandled promise rejection
+   The async operation in [users.js line 78](src/api/users.js#L78) lacks try-catch handling, which will cause unhandled promise rejections when errors occur.
+
+3. **Contact Property Misunderstanding**
+   The `hasContactData()` function in [utils.ts lines 340-354](src/views/Checkout/utils.ts#L340) incorrectly assumes contact can be null. According to the codebase patterns, contact objects are always present but contain nullable fields.
 ```
+
+### IMPORTANT: File Reference Rules
+
+1. **Use Markdown links**: Always use `[text](path#Lnumber)` format
+2. **Relative paths**: All paths must be relative to the working directory
+3. **Line numbers**: Use `#L` followed by the line number (e.g., `#L42`)
+4. **Natural language**: Write findings as complete sentences with embedded file links
+5. **Link text**: Can be just filename or include "line X" for clarity
 
 This ensures users can click directly on the file references to jump to the exact code location being discussed.

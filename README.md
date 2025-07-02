@@ -84,7 +84,15 @@ A condensed version of the loop command that maintains all essential functionali
 - All required file outputs and naming conventions
 - Reduced from ~1400 lines to ~150 lines while preserving all critical logic
 
-Both commands execute the exact same review process - `/cloop` simply presents it more concisely.
+### `/bloop` - Comprehensive Review Process
+A complete implementation of the code review state machine that:
+- Executes all review states automatically in sequence
+- Generates all required review artifacts (code-review, decision-helper, iteration-summary)
+- Implements suggestions based on scores (≥7 = implement, 4-6 = defer, <4 = skip)
+- Continues iterations until all critical issues are resolved
+- Provides detailed progress tracking and state transitions
+
+All three commands execute the same review process - they differ only in documentation verbosity and execution style.
 
 ### Plan Mode Handling
 

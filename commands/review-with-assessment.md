@@ -52,6 +52,7 @@ The spawned code review agent will:
    - List changed files: `git diff --name-only origin/{default}...HEAD`
    - Check uncommitted changes: `git status --porcelain`
    - Read and analyze all changed files
+   - Track line numbers for all findings to enable VSCode-compatible links
 
 2. **Determine review scope**:
    - All changes between current branch and default branch
@@ -69,7 +70,7 @@ The code review agent will examine all detected changes for:
 - Testing coverage
 - Breaking changes or API compatibility
 
-**Output**: The code review agent will create a `code-review.md` file with all findings, categorized by severity and impact.
+**Output**: The code review agent will create a `code-review.md` file with all findings, categorized by severity and impact. Each finding MUST include VSCode-compatible file references in the format `path/to/file:line` or `path/to/file:line:column` so users can click to navigate directly to the code being discussed.
 
 **Note**: If a project-specific CLAUDE.md exists, I will also check for and apply any custom review criteria defined there.
 
@@ -100,22 +101,49 @@ Created by the code review agent, containing:
 - Context summary (branch, files changed, PR comments if available)
 - Detailed findings categorized by severity
 - Security, performance, and best practice observations
-- Specific code locations and recommendations
+- Specific code locations with VSCode-compatible links (e.g., `src/auth/login.js:45` for line 45)
+- Recommendations with direct links to affected code
 
 ### 2. `decision-helper.md`
 Created by the decision-helper agent, containing:
 - Objective assessment of each code review finding
 - Relevance scores (0-10) for each suggestion
 - Priority categorization (critical/important/nice-to-have)
-- Implementation recommendations
+- Implementation recommendations with file references preserved from code-review.md
 - Merge readiness verdict
 
 ### 3. `code-review-summary.md`
 Created by the main agent, containing:
 - Executive summary combining both perspectives
-- Prioritized action items based on decision-helper scores
-- Critical issues that must be addressed
-- Optional improvements for consideration
+- Prioritized action items based on decision-helper scores with VSCode-compatible file links
+- Critical issues that must be addressed with direct links to code locations
+- Optional improvements for consideration with clickable references
 - Overall merge recommendation with rationale
 
 **Note**: All three files will be overwritten each time this command is run. Save them elsewhere if you need to keep multiple reviews.
+
+## VSCode-Compatible Link Format
+
+All code references in the output files MUST use VSCode-compatible clickable links:
+
+### Format Examples:
+- `src/auth/login.js:42` - Opens login.js at line 42
+- `src/auth/login.js:42:15` - Opens login.js at line 42, column 15
+- `./config/settings.json:10` - Relative path to settings.json, line 10
+
+### Example Output in code-review.md:
+```markdown
+## Critical Issues
+
+1. **SQL Injection Vulnerability**
+   - Location: `src/database/queries.js:156`
+   - Issue: User input directly concatenated into SQL query
+   - Recommendation: Use parameterized queries
+
+2. **Missing Error Handling**
+   - Location: `src/api/users.js:78:20`
+   - Issue: Async operation without try-catch
+   - Impact: Unhandled promise rejection
+```
+
+This ensures users can click directly on the file references to jump to the exact code location being discussed.

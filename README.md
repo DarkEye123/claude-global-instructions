@@ -94,6 +94,23 @@ A complete implementation of the code review state machine that:
 
 All three commands execute the same review process - they differ only in documentation verbosity and execution style.
 
+### `/review-with-assessment` - Context-Aware Code Review with Visual Analysis
+An enhanced code review command that:
+- Gathers deep context from Linear tickets and GitHub PRs
+- **NEW: Analyzes images** from tickets/PRs (screenshots, mockups, diagrams)
+- Follows ticket chains and cross-repository references
+- Creates intelligent dependency graphs
+- Performs comprehensive code review with visual context
+- Spawns decision-helper for objective assessment
+- Outputs three files: code-review.md, decision-helper.md, and code-review-summary.md
+
+#### Image Analysis Features:
+- **Automatic Extraction**: Finds images in Linear tickets, PR descriptions, and comments
+- **Smart Caching**: Stores analyzed images in `{TICKET/PR}-images/` folders
+- **Visual Intelligence**: Context-aware analysis of UI screenshots, diagrams, mockups, and errors
+- **Efficient**: Previously analyzed images are cached and reused
+- **Comprehensive**: Tracks processing status (successful, failed, cached)
+
 ### Plan Mode Handling
 
 When plan mode is active:

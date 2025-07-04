@@ -111,6 +111,33 @@ An enhanced code review command that:
 - **Efficient**: Previously analyzed images are cached and reused
 - **Comprehensive**: Tracks processing status (successful, failed, cached)
 
+### `/implement-with-assessment` - Context-Aware Implementation Assistant (EXPERIMENTAL)
+⚠️ **EXPERIMENTAL FEATURE - IN ACTIVE DEVELOPMENT** ⚠️
+
+An advanced implementation command that:
+- Parallelizes implementation tasks using multiple sub-agents for maximum speed
+- Creates persistent context cache in `agentic-help/` folder
+- Gathers comprehensive context from Linear issues and GitHub PRs
+- Analyzes and caches images from tickets/PRs
+- Shares context across all sub-agents for consistency
+- Automatically triggers code review after implementation
+
+#### Key Features:
+- **Massive Parallelization**: Spawns multiple agents to work on different parts simultaneously
+- **Smart Context Caching**: `LINEAR-{ISSUE}.md` and `{BRANCH}.md` files persist between runs
+- **Deep Research**: Follows all ticket references, subtasks, comments, and linked issues
+- **Visual Context**: Analyzes UI mockups, diagrams, and screenshots with WebFetch
+- **Efficient Reuse**: Checks for existing context before gathering (saves API calls)
+- **Automatic Review**: Triggers `/loop` command after implementation completes
+
+#### Usage:
+```
+/implement-with-assessment <task description>
+/implement-with-assessment --refresh <task description>  # Force refresh cached context
+```
+
+**Note**: This is an experimental command under active development. Behavior may change.
+
 ### Plan Mode Handling
 
 When plan mode is active:

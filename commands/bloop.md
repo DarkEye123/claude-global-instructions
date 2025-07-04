@@ -15,6 +15,22 @@ This command is automatically executed by the agent when ANY file is modified us
 
 External review detection happens when the user uses phrases like "review this pr", "do a review", "do a code-review", "review this code", or "can you review". In these cases, perform only the requested review without triggering the self-review cycle.
 
+## Command Invocation and Task Capture
+
+When invoked directly by the user:
+```
+/bloop <task_description>
+```
+
+The `$ARGUMENTS` variable captures everything after "/bloop ". For example:
+- User types: `/bloop add error handling to the login function`
+- `$ARGUMENTS` becomes: `"add error handling to the login function"`
+
+This captured task description is then:
+1. Used to create TASK.md with the exact user request
+2. Passed to the implementation phase as the primary objective
+3. Referenced throughout the review cycle to ensure changes stay on target
+
 ## Complete Review Process - Detailed Steps
 
 ### Step 1: Initial Setup and Directory Preparation
@@ -35,7 +51,7 @@ Create ./code-reviews/TASK.md with the following structure:
 # Task: [brief description]
 
 ## Original Request
-[exact user message word-for-word]
+$ARGUMENTS
 
 ## Approved Plan
 [implementation approach with bullet points]
@@ -46,6 +62,8 @@ Create ./code-reviews/TASK.md with the following structure:
 ## Out of Scope
 [what not to implement]
 ```
+
+The `$ARGUMENTS` variable contains the exact task description provided by the user when invoking the command.
 
 This file becomes the single source of truth for all subsequent reviews. Every review will reference this document to ensure changes stay within scope.
 
@@ -65,8 +83,8 @@ If this is the first iteration (iteration == 1), create ./code-reviews/iteration
 
 Use the Task tool to spawn a code review agent with comprehensive context. The prompt must include:
 
-- Primary task from TASK.md
-- Original user request
+- Primary task from TASK.md (which was created from $ARGUMENTS)
+- Original user request ($ARGUMENTS)
 - Task constraints (out of scope items)
 - PR context if on a PR branch (check git branch and run gh pr view --comments if applicable)
 - List of all files modified with descriptions

@@ -9,7 +9,16 @@ This command is automatically executed when:
 - The user hasn't explicitly requested to skip review
 - The task is NOT an external code review
 
-When triggered: `$PROMPT` (current task context)
+When triggered: `$ARGUMENTS` (current task context)
+
+## Command Invocation
+
+When invoked directly:
+```
+/cloop <task_description>
+```
+
+The `$ARGUMENTS` variable captures everything after "/cloop ". This task description is used throughout the review process.
 
 ---
 
@@ -34,7 +43,7 @@ ACTION: Write(./code-reviews/TASK.md)
 CONTENT:
   # Task: {brief_description}
   ## Original Request
-  {exact_user_message}
+  $ARGUMENTS
   ## Approved Plan
   {implementation_approach}
   ## Scope

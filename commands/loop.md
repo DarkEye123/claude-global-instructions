@@ -10,7 +10,20 @@ This command is automatically executed by the agent when:
 - The task is NOT an external code review
 
 When triggered, the full state machine described below will execute with the prompt:
-`$PROMPT` (contains the current task context)
+`$ARGUMENTS` (contains the current task context)
+
+## Command Invocation
+
+When invoked directly by the user:
+```
+/loop <task_description>
+```
+
+The `$ARGUMENTS` variable captures everything after "/loop ". For example:
+- User types: `/loop implement user authentication with JWT`
+- `$ARGUMENTS` becomes: `"implement user authentication with JWT"`
+
+This task description flows through the entire review process.
 
 ---
 
@@ -105,7 +118,7 @@ CREATE_TASK_MD:
     # Task: {brief_description}
     
     ## Original Request
-    {exact_user_message}
+    $ARGUMENTS
     
     ## Approved Plan
     {implementation_approach}
@@ -204,7 +217,7 @@ SPAWN_CODE_REVIEW:
     
     ## Session Context
     **Primary Task**: {task_from_TASK_md}
-    **Original Request**: {exact_user_request}
+    **Original Request**: $ARGUMENTS
     **Task Constraints**: {out_of_scope_from_TASK_md}
     
     ## PR Context (if available)

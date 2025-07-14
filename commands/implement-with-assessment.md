@@ -48,15 +48,18 @@ SPAWN_PARALLEL_TASKS:
   LINEAR_CONTEXT_TASK:
     IF branch contains Linear ID (e.g., feat/LIN-123-feature):
       SPAWN: Linear context gatherer
+      CONTEXT: "ultrathink - Enhanced Linear issue context gathering"
       OUTPUT: ./agentic-help/LINEAR-{ROOT_ISSUE}.md
   
   GITHUB_CONTEXT_TASK:
     IF on branch with PR or commits:
       SPAWN: GitHub context gatherer
+      CONTEXT: "ultrathink - Enhanced GitHub PR and commit context analysis"
       OUTPUT: ./agentic-help/{BRANCH_NAME}.md
   
   CODEBASE_ANALYSIS_TASK:
     SPAWN: Code structure analyzer
+    CONTEXT: "ultrathink - Deep codebase structure and pattern analysis"
     OUTPUT: In-memory analysis for main agent
 ```
 
@@ -202,28 +205,34 @@ SPAWN_IMPLEMENTATION_AGENTS:
     
     PARALLEL_BATCH_1:
       - Agent A: Implement API endpoints
-        Context: LINEAR-123.md, existing API patterns
+        Context: "ultrathink - API endpoint implementation"
+        Resources: LINEAR-123.md, existing API patterns
         Output: New/modified API files
       
       - Agent B: Create data models
-        Context: LINEAR-123.md, database schema
+        Context: "ultrathink - Data model creation"
+        Resources: LINEAR-123.md, database schema
         Output: Model files
       
       - Agent C: Setup test structure
-        Context: Testing patterns, requirements
+        Context: "ultrathink - Test framework setup"
+        Resources: Testing patterns, requirements
         Output: Test file skeletons
     
     PARALLEL_BATCH_2: (after Batch 1)
       - Agent D: Implement frontend components
-        Context: API from Agent A, UI requirements
+        Context: "ultrathink - Frontend component implementation"
+        Resources: API from Agent A, UI requirements
         Output: React/Vue/etc components
       
       - Agent E: Write API tests
-        Context: Agent A output
+        Context: "ultrathink - API test implementation"
+        Resources: Agent A output
         Output: API test files
       
       - Agent F: Write model tests
-        Context: Agent B output
+        Context: "ultrathink - Model test implementation"
+        Resources: Agent B output
         Output: Model test files
   
   COORDINATION:
@@ -236,6 +245,8 @@ SPAWN_IMPLEMENTATION_AGENTS:
 **Sub-Agent Instructions Template**:
 ```yaml
 HANDOFF_TO_SUB_AGENT:
+  Context Initialization: "ultrathink - Critical implementation task"
+  
   Context Available:
     - ./agentic-help/LINEAR-{ID}.md - Full ticket context
     - ./agentic-help/{BRANCH}.md - GitHub context

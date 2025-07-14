@@ -83,6 +83,7 @@ If this is the first iteration (iteration == 1), create ./code-reviews/iteration
 
 Use the Task tool to spawn a code review agent with comprehensive context. The prompt must include:
 
+- Context initialization: "ultrathink - Comprehensive code review for quality assurance"
 - Primary task from TASK.md (which was created from $ARGUMENTS)
 - Original user request ($ARGUMENTS)
 - Task constraints (out of scope items)
@@ -104,6 +105,7 @@ Display the complete code review results to the user, including all issues found
 Output "Code review complete. Now initiating decision-helper assessment to evaluate suggestions against original requirements..." Then use the Task tool to spawn a decision helper agent.
 
 The decision helper prompt must include:
+- Context initialization: "ultrathink - Objective assessment of code review findings against requirements"
 - Reference to code-reviews/TASK.md for original requirements
 - Current iteration number
 - List of previous review files if any

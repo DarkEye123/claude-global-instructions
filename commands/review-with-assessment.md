@@ -5,7 +5,10 @@ Perform a comprehensive code review based on the current context, then assess th
 ## Context Detection (Main Agent)
 I'll gather minimal context to pass to the review task:
 - Current branch name: `git branch --show-current`
-- Default branch: `git symbolic-ref refs/remotes/origin/HEAD`
+- Main branch determination (in order of precedence):
+  1. If on PR branch: use `gh pr view --json baseRefName` to get target branch
+  2. Check project-level CLAUDE.md for defined main branch
+  3. Fallback: `git symbolic-ref refs/remotes/origin/HEAD`
 - Any specific areas mentioned: $ARGUMENTS
 
 ## Review Process (Main Agent Orchestration)
@@ -18,18 +21,50 @@ I'll gather minimal context to pass to the review task:
 5. Presenting final combined output
 
 ### Step 1: Spawn Code Review Task
-The main agent will spawn a code review task with minimal context following a handoff pattern:
+The main agent will spawn a code review task with minimal context following a handoff pattern.
+
+**Main Branch Detection Logic**:
+```yaml
+MAIN_BRANCH_DETECTION:
+  PRIORITY_ORDER:
+    1. PULL_REQUEST_TARGET:
+       - Run: gh pr view --json baseRefName 2>/dev/null
+       - If successful, extract baseRefName as main branch
+       - This is the branch the PR will merge into
+       - Takes precedence to ensure PR reviews are accurate
+    
+    2. PROJECT_CLAUDE_MD:
+       - Check if ./CLAUDE.md exists
+       - Look for: main_branch: "branch_name" or default_branch: "branch_name"
+       - Use the specified branch if found
+       - Only used when not on a PR branch
+    
+    3. GIT_DEFAULT_FALLBACK:
+       - Run: git symbolic-ref refs/remotes/origin/HEAD
+       - Extract branch name from refs/remotes/origin/main format
+       - Use as last resort
+  
+  EXAMPLE_FLOW:
+    - If on PR targeting "staging" → use "staging" (even if CLAUDE.md says "develop")
+    - Else if CLAUDE.md has "main_branch: develop" → use "develop"
+    - Else use git default (usually "main" or "master")
+```
 
 **Handoff Information** (following HANDOVER.md structure):
 ```yaml
 Work Completed (by Main Agent):
   - Current branch name: obtained via `git branch --show-current`
-  - Default branch: obtained via `git symbolic-ref refs/remotes/origin/HEAD`
+  - Main branch: determined via priority order:
+    1. PR target branch from `gh pr view --json baseRefName` (if on PR)
+    2. Project CLAUDE.md main_branch setting (if not on PR)
+    3. Default from `git symbolic-ref refs/remotes/origin/HEAD`
   - Review focus: extracted from $ARGUMENTS
 
 Current Task (for Code Review Agent):
+  Context Initialization: "ultrathink - Comprehensive code review with deep context analysis"
+  
   - Check if on PR branch and load PR comments via `gh pr view --comments`
-  - Load full git diff between branches
+  - Load full git diff between branches using determined main branch
   - Extract Linear issue ID from branch name
   - CRITICAL: Perform deep context gathering:
     - Follow all Linear ticket references (up to depth 2)
@@ -49,12 +84,15 @@ Key Decision:
 ### Step 2: Detailed Analysis (Code Review Task)
 The spawned code review agent will:
 1. **Gather full context**:
+   - Determine main branch using provided context from main agent
    - Check current git branch for PR reference
-   - If on a PR branch, run: `gh pr view --comments` to get PR comments
+   - If on a PR branch:
+     - Run: `gh pr view --comments` to get PR comments
+     - Run: `gh pr view --json baseRefName` to confirm target branch
    - Extract Linear ID from branch name (e.g., feat/LIN-123-feature)
    - Load Linear issue for additional context if available
-   - Compare with default: `git diff origin/{default}...HEAD`
-   - List changed files: `git diff --name-only origin/{default}...HEAD`
+   - Compare with main branch: `git diff origin/{main}...HEAD`
+   - List changed files: `git diff --name-only origin/{main}...HEAD`
    - Check uncommitted changes: `git status --porcelain`
    - Read and analyze all changed files
    - Track line numbers for all findings to enable VSCode-compatible links
@@ -317,9 +355,13 @@ The spawned code review agent will:
    ```
 
 3. **Determine review scope**:
-   - All changes between current branch and default branch
+   - All changes between current branch and determined main branch
    - Include both committed and uncommitted changes
    - Focus on areas mentioned in arguments if provided
+   - Main branch priority:
+     1. Project CLAUDE.md configuration
+     2. PR target branch (if applicable)
+     3. Git default branch
 
 ### Step 3: Comprehensive Code Review
 The code review agent will examine all detected changes for:
@@ -342,7 +384,7 @@ The code review agent will examine all detected changes for:
 **Note**: If a project-specific CLAUDE.md exists, I will also check for and apply any custom review criteria defined there.
 
 ### Step 4: Decision-Helper Assessment
-After receiving the code review results, the main agent will spawn a decision-helper to:
+After receiving the code review results, the main agent will spawn a decision-helper with context "ultrathink - Objective assessment of code review findings" to:
 - Read the `code-review.md` file
 - Evaluate each review finding objectively
 - Score findings by actual impact (0-10)

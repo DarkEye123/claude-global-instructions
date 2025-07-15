@@ -145,6 +145,7 @@
       "Bash(cp:*)",
       "Bash(curl*anthropic.com*)",
       "Bash(rm -rf ./code-reviews)",
+      "Bash(mkdir -p code-reviews && rm -f code-reviews/*.md)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
       "mcp__linear__list_comments",

@@ -1,6 +1,6 @@
 {
   "env": {
-    "MAX_THINKING_TOKENS": "32768"
+    "MAX_THINKING_TOKENS": "4096"
   },
   "permissions": {
     "allow": [
@@ -222,5 +222,5 @@
     ],
     "deny": []
   },
-  "model": "opus"
+  "model": "sonnet"
 }

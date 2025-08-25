@@ -22,3 +22,21 @@
 - "The Cypress tests are failing with this specific error: [exact error]"
 - "I cannot find the supplier configuration mentioned in the requirements"
 - "Two approaches are possible for the view routing, and I need a decision"
+
+# KNOWN ISSUES & TEMPORARY OBSTACLES
+
+## Piped Commands Permission Bug
+**Status**: Active bug (GitHub #1271)
+
+Claude Code doesn't respect allowed permissions for piped commands (`|`), `&&`, or `;` operators.
+
+**Workaround**: Use temporary files instead of pipes
+```bash
+# AVOID: command1 | command2
+# USE: 
+command1 > /tmp/temp_output.txt
+command2 < /tmp/temp_output.txt
+rm /tmp/temp_output.txt
+```
+
+**Details**: See `known-problems/piping.md` for full documentation

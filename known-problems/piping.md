@@ -50,5 +50,6 @@ This particularly affects Claude 4 as it tends to use more piped commands for pa
 
 ## Status
 - **Reported**: Yes
-- **Fixed**: No (as of 2025-08-22)
-- **Severity**: Medium - affects workflow but has workarounds
+- **Fixed**: Yes — resolved in v1.0.110 (Claude Code v2.1.52+ confirmed working)
+- **Closed**: GitHub issue #1271 closed by Anthropic collaborator `bogini`
+- **Note**: Workarounds below are no longer needed

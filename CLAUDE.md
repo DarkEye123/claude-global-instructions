@@ -15,6 +15,16 @@
 - Assume file locations or function names exist
 - Hide failures or errors to appear competent
 - Continue when core requirements are unclear
+- Reuse results from a previous tool call when asked to review something new — always re-read source material fresh
+
+## Code Review: Source Discipline
+
+When reviewing a specific commit, branch, or file state:
+
+- ALWAYS use `git show <commit> -- <file>` to read the actual committed content of each file
+- NEVER rely on a previously cached `git diff --cached` or `git diff` result when the review target has changed
+- Every finding MUST be backed by a quoted line or snippet obtained in the current review session
+- If I base a finding on previously read content, I MUST explicitly state which tool call produced it and when
 
 ## Escalation Examples:
 

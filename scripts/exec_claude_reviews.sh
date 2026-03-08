@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-claude exec < ~/.claude/prompts/specialized/simple-review-low.md -m gpt-5.3-claude --sandbox workspace-write -c model_reasoning_effort=low &
+claude -p < ~/.claude/prompts/specialized/simple-review-low.md --model sonnet  --effort low &
 LOW_PID=$!
 
-claude exec < ~/.claude/prompts/specialized/simple-review-medium.md -m gpt-5.3-claude --sandbox workspace-write -c model_reasoning_effort=medium &
+claude -p < ~/.claude/prompts/specialized/simple-review-medium.md --model sonnet  --effort medium &
 MEDIUM_PID=$!
 
-claude exec < ~/.claude/prompts/specialized/simple-review-high.md -m gpt-5.3-claude --sandbox workspace-write -c model_reasoning_effort=high &
+claude -p < ~/.claude/prompts/specialized/simple-review-high.md --model sonnet --effort high &
 HIGH_PID=$!
 
 wait "$HIGH_PID"

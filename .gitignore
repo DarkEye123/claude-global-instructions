@@ -34,3 +34,15 @@ CLAUDE-iteration.md
 CLAUDE-machine.md
 CLAUDE-original.md
 shell-snapshots/
+debug/**
+backups/**
+file-history/**
+image-cache/*
+telemetry
+tasks
+paste-cache
+plugins
+cache
+history.jsonl
+policy-limits.json
+stats-cache.json

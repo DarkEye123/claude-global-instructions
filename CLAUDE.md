@@ -32,3 +32,18 @@ When reviewing a specific commit, branch, or file state:
 - "The Cypress tests are failing with this specific error: [exact error]"
 - "I cannot find the supplier configuration mentioned in the requirements"
 - "Two approaches are possible for the view routing, and I need a decision"
+
+
+## Formatting Requirements
+
+- When exporting a code-review to a markdown file (e.g., `code-review.md`), format code location links as `[path:line](path#Lline)` so markdown previews (e.g., VS Code) keep them clickable. In other contexts, use the formatting expected for that medium.
+
+- Do not add specific line references to README files, or CLAUDE.md itself, unless explicitly requested by the user. Specific line references are used only for documentation or question answers about code behavior, bugs, or reviews.
+
+## MCP tooling
+
+- You can use context7 MCP for any other documentation exploration needs without my further approval
+
+## Tools
+
+- When interacting with branch or repository you can use `gh` tool which will be always available. Use it to read PR comments, create PRs, respond to PR in form of review or other github related activities. Use it whenever `git` would be less optimal to use

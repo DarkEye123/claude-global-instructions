@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-claude -p < ~/.claude/prompts/specialized/simple-review-low.md --model sonnet  --effort low &
+claude -p < ~/.claude/commands/specialized/simple-review-low.md --model sonnet  --effort low &
 LOW_PID=$!
 
-claude -p < ~/.claude/prompts/specialized/simple-review-medium.md --model sonnet  --effort medium &
+claude -p < ~/.claude/commands/specialized/simple-review-medium.md --model sonnet  --effort medium &
 MEDIUM_PID=$!
 
-claude -p < ~/.claude/prompts/specialized/simple-review-high.md --model sonnet --effort high &
+claude -p < ~/.claude/commands/specialized/simple-review-high.md --model sonnet --effort high &
 HIGH_PID=$!
 
 wait "$HIGH_PID"
